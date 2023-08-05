@@ -1,0 +1,36 @@
+name: Check releases every 60 minutes
+on:
+  schedule:
+    - cron: "0 * * * *"
+jobs:
+  check-releases:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install my_hero_academia_scan_bot dependencies
+      run: |
+        echo "The job was automatically triggered by a ${{ github.event_name }} event."
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install -r requirements.txt
+    - name: Run checker
+      env:
+        MHA_BOT_TOKEN: ${{ secrets.MHA_BOT_TOKEN }}
+        PERSONAL_ID: ${{ secrets.PERSONAL_ID }}
+        GROUP_ID: ${{ secrets.GROUP_ID }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        DROPBOX_ACCESS_TOKEN: ${{ secrets.DROPBOX_ACCESS_TOKEN }}
+        DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+        DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+      run: |
+        env
+        PYTHONPATH=$PYTHONPATH:$(pwd) python my_hero_academia_scan_bot/main.py
+        echo "This job's status is ${{ job.status }}."

@@ -1,0 +1,5 @@
+my_hero_academia_scan_bot/secrets.py
+my_hero_academia_scan_bot/tester.py
+venv/
+.idea/
+*.pyc
